@@ -1,0 +1,28 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/hello/User
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/dfa
+Accept: application/json
+Content-Type: application/json
+
+{
+    "states": ["q0", "q1", "q2"],
+    "input_symbols": ["0", "1"],
+    "transitions": {
+        "q0": {"0": "q0", "1": "q1"},
+        "q1": {"0": "q0", "1": "q2"},
+        "q2": {"0": "q2", "1": "q1"}
+    },
+    "initial_state": "q0",
+    "final_states": ["q1"],
+    "input_w": "01"
+}
