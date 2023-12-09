@@ -19,14 +19,16 @@ async def say_hello(name: str):
 @app.post("/dfa")
 async def automata(request: Request):
     info = await request.json()
+    # dfa its a quintuple
+    states = set(info.get("states", [])) # finite set of states
+    input_symbols = set(info.get("input_symbols", [])) # alphabet
+    transitions = dict(info.get("transitions", {})) # function of state transitions
+    initial_state = info.get("initial_state", "") # initial state
+    final_states = set(info.get("final_states", [])) # final state
 
-    states = set(info.get("states", []))
-    input_symbols = set(info.get("input_symbols", []))
-    initial_state = info.get("initial_state", "")
-    final_states = set(info.get("final_states", []))
-    transitions = dict(info.get("transitions", {}))
 
-    input_w = info.get("input_w", "")
+    input_w = info.get("input_w", "") # input word
+
 
     # Check if the DFA is valid
 
@@ -58,6 +60,7 @@ async def automata(request: Request):
         return {"message": "Rejected"}
 
 
+#
 @app.post("/dpda")
 async def pushdown_automata(request: Request):
     info = await request.json()
@@ -66,22 +69,25 @@ async def pushdown_automata(request: Request):
     stack_symbols = set(info.get("stack_symbols", []))
     transitions = dict(info.get("transitions", {}))
     initial_state = info.get("initial_state", "")
-    initial_stack_symbol = info.get("initial_stack_symbol", "") #pode ser iniciado vazio
+    initial_stack_symbol = info.get("initial_stack_symbol", "")
     final_states = set(info.get("final_states", []))
     acceptance_mode = info.get("acceptance_mode", "")
-
     input_w = info.get("input_w", "")
 
     # regras de negócio
     if len(states) == 0:
         return {"message": "States cannot be empty"}
+    if len(states) == 0:
+        return {"message": "States cannot be empty"}
     if len(input_symbols) == 0:
         return {"message": "Input Symbol cannot be empty"}
     if len(stack_symbols) == 0:
-        return {"message": ""}
+        return {"message": "Stack symbols cant be empty"}
     if len(transitions) == 0:
         return {"message": "Transitions cannot be empty"}
     if initial_state == "":
+        return {"message": "Initial state cant be empty"}
+    if initial_stack_symbol == "":
         return {"message": "Initial state cant be empty"}
     if final_states == "":
         return {"message": "Final state(s) cant be empty"}
@@ -90,17 +96,26 @@ async def pushdown_automata(request: Request):
 
     dpda = DPDA(
         states=states,
+        stack_symbols=stack_symbols,
         input_symbols=input_symbols,
+        initial_stack_symbol=initial_stack_symbol,
         transitions=transitions,
         initial_state=initial_state,
         final_states=final_states
     )
 
+    print("[states]: ", states, "\n")
+    print("[stack_symbols]: ", stack_symbols, "\n")
+    print("[input_symbols]: ", input_symbols, "\n")
+    print("[initial_stack_symbol]: ", initial_stack_symbol, "\n")
+    print("[transitions]: ", transitions, "\n")
+    print("[initial_state]: ", initial_state, "\n")
+    print("[final_states]: ", final_states, "\n")
+
+
     if dpda.accepts_input(input_w):
         return {"message": "Accepted"}
     return {"message": "Rejected"}
-
-    
 
 @app.post("/nfa")
 async def nfa_automata(request: Request):
