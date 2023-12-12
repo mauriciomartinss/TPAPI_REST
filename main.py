@@ -33,19 +33,24 @@ async def automata(request: Request):
         input_w = info.get("input_w", "") # input word
 
         # Check if the DFA is valid
+    try:
         if len(states) == 0:
-            return {"message": "States cannot be empty"}
+            return { "message": "States cannot be empty" }
+        if any(state == "" for state in states):
+            return {"message": "Cannot exists empty state in states"}
         if len(input_symbols) == 0:
-            return {"message": "Input symbols cannot be empty"}
+            return { "message": "Input symbols cannot be empty" }
         if initial_state == "":
-            return {"message": "Initial state cannot be empty"}
+            return { "message": "Initial state cannot be empty" }
         if len(final_states) == 0:
-            return {"message": "Final states cannot be empty"}
+            return { "message": "Final states cannot be empty" }
         if len(transitions) == 0:
-            return {"message": "Transitions cannot be empty"}
+            return { "message": "Transitions cannot be empty" }
         if input_w == "":
-            return {"message": "Input string cannot be empty"}
-
+            return { "message": "Input string cannot be empty" }
+    except ValueError as e:
+        return {"ERR0R:": e.args[0]}
+    else:
         # DFA which matches all binary strings ending in an odd number of '1's
         dfa = DFA(
             states=states,
@@ -56,9 +61,9 @@ async def automata(request: Request):
         )
 
         if dfa.accepts_input(input_w):
-            return {"message": "Accepted"}
+            return { "message": "Accepted" }
         else:
-            return {"message": "Rejected"}
+            return { "message": "Rejected" }
 
 
 #pushdown automata
@@ -67,7 +72,7 @@ async def pushdown_automata(request: Request):
     try:
         info = await request.json()
     except ValueError as e:
-        return {"ERR0R: ", e.args}
+        return {"ERR0R ": e.args}
     else:
         states = set(info.get("states", []))
         input_symbols = set(info.get("input_symbols", []))
@@ -80,25 +85,27 @@ async def pushdown_automata(request: Request):
         input_w = info.get("input_w", "")
 
         # regras de negócio
-        if len(states) == 0:
-            return {"message": "States cannot be empty"}
-        if len(states) == 0:
-            return {"message": "States cannot be empty"}
-        if len(input_symbols) == 0:
-            return {"message": "Input Symbol cannot be empty"}
-        if len(stack_symbols) == 0:
-            return {"message": "Stack symbols cant be empty"}
-        if len(transitions) == 0:
-            return {"message": "Transitions cannot be empty"}
-        if initial_state == "":
-            return {"message": "Initial state cant be empty"}
-        if initial_stack_symbol == "":
-            return {"message": "Initial state cant be empty"}
-        if final_states == "":
-            return {"message": "Final state(s) cant be empty"}
-        if acceptance_mode == "":
-            return {"message": "Acceptance mode cant be empty! Needs to be defined!"}
-
+        try:
+            if len(states) == 0:
+                return { "message": "States cannot be empty" }
+            if any(state == "" for state in states):
+                return {"message": "Cannot exists empty state in states"}
+            if len(input_symbols) == 0:
+                return { "message": "Input Symbol cannot be empty" }
+            if len(stack_symbols) == 0:
+                return { "message": "Stack symbols cant be empty" }
+            if len(transitions) == 0:
+                return {"message": "Transitions cannot be empty"}
+            if initial_state == "":
+                return { "message": "Initial state cant be empty" }
+            if initial_stack_symbol == "":
+                return { "message": "Initial state cant be empty" }
+            if final_states == "":
+                return { "message": "Final state(s) cant be empty" }
+            if acceptance_mode == "":
+                return { "message": "Acceptance mode cant be empty! Needs to be defined!" }
+        except ValueError as e:
+            return { "ERROR": e.args }
         dpda = DPDA(
             states=states,
             stack_symbols=stack_symbols,
@@ -108,15 +115,6 @@ async def pushdown_automata(request: Request):
             initial_state=initial_state,
             final_states=final_states
         )
-
-        print("[states]: ", states, "\n")
-        print("[stack_symbols]: ", stack_symbols, "\n")
-        print("[input_symbols]: ", input_symbols, "\n")
-        print("[initial_stack_symbol]: ", initial_stack_symbol, "\n")
-        print("[transitions]: ", transitions, "\n")
-        print("[initial_state]: ", initial_state, "\n")
-        print("[final_states]: ", final_states, "\n")
-
 
         if dpda.accepts_input(input_w):
             return {"message": "Accepted"}
@@ -138,26 +136,31 @@ async def nfa_automata(request: Request):
         input_w = info.get("input_w", "")
 
         # regras de negócio
-        if len(states) == 0:
-            return {"message": "States cannot be empty"}
-        if len(input_symbols) == 0:
-            return {"message": "Input Symbol cannot be empty"}
-        if len(transitions) == 0:
-            return {"message": "Transitions cannot be empty"}
-        if initial_state == "":
-            return {"message": "Initial state cant be empty"}
-        if len(final_states) == 0:
-            return {"message": "Final state(s) cant be empty"}
+        try:
+            if len(states) == 0:
+                return {"message": "States cannot be empty"}
+            if any(state == "" for state in states):
+                return {"message": "Cannot exists empty state in states"}
+            if len(input_symbols) == 0:
+                return {"message": "Input Symbol cannot be empty"}
+            if len(transitions) == 0:
+                return {"message": "Transitions cannot be empty"}
+            if initial_state == "":
+                return {"message": "Initial state cant be empty"}
+            if len(final_states) == 0 or any(final_state == "" for final_state in final_states):
+                return {"message": "Final state(s) cant be empty"}
+        except ValueError as e:
+            return {"ERR0R: ": e.args}
+        else:
+            nfa = NFA(
+                states=states,
+                input_symbols=input_symbols,
+                transitions=transitions,
+                initial_state=initial_state,
+                final_states=final_states
+            )
 
-        nfa = NFA(
-            states=states,
-            input_symbols=input_symbols,
-            transitions=transitions,
-            initial_state=initial_state,
-            final_states=final_states
-        )
-
-        if nfa.accepts_input(input_w):
-            return {"message": "Accepted"}
-        return {"message": "Rejected"}
+            if nfa.accepts_input(input_w):
+                return {"message": "Accepted"}
+            return {"message": "Rejected"}
 
