@@ -7,8 +7,8 @@
 - Link para o repositório do [DockerHub](https://hub.docker.com/repository/docker/mauriciomartinss/api-teoria-computacao/general)
 
 ### Testes HTTP
-1. DFA - which matches all binary strings ending in an odd number of '1's (POST http://127.0.0.1:8000/dfa)
 
+1. DFA - which matches all binary strings ending in an odd number of '1's (POST http://127.0.0.1:8000/dfa)
 ```json
 {
     "states": ["q0", "q1", "q2"],
@@ -24,8 +24,7 @@
 }
 ```
 
-2. DPDA which which matches zero or more 'a's, followed by the same number of 'b's (accepting by final state)
-
+2. DPDA which which matches zero or more 'a's, followed by the same number of 'b's (accepting by final state) (POST http://127.0.0.1:8000/dpda)
 ```json
 {
   "states": [
@@ -98,7 +97,8 @@
 }
 ```
 
-3. NFA which matches strings beginning with 'a', ending with 'a', and containing no consecutive 'b's
+3. NFA which matches strings beginning with 'a', ending with 'a', and containing no consecutive 'b's (POST http://127.0.0.1:8000/nfa)
+
 ```json
 "states": ["q0", "q1", "q2"],
     "input_symbols": ["b", "a"],
